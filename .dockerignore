@@ -1,0 +1,7 @@
+.dockerignore
+.env.example
+.gitignore
+.idea
+dist
+node_modules
+src/data/client

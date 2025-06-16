@@ -17,6 +17,7 @@ import { EventsService } from './events.service';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { QueryAllEventsDto } from './dto/query-all-events.dto';
 import { ParticipantsService } from '../participants/participants.service';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 
 @Controller('events')
 export class EventsController {
@@ -25,6 +26,10 @@ export class EventsController {
     private readonly participantsService: ParticipantsService,
   ) {}
 
+  @ApiOperation({
+    summary: 'Create event',
+  })
+  @ApiBearerAuth()
   @UseGuards(JwtGuard)
   @Post()
   async create(
@@ -34,6 +39,10 @@ export class EventsController {
     return this.eventsService.create(user, createEventDto);
   }
 
+  @ApiOperation({
+    summary: 'Register current user on event',
+  })
+  @ApiBearerAuth()
   @UseGuards(JwtGuard)
   @Post('/participants/me/:eventId')
   async registerOnEvent(
@@ -43,22 +52,36 @@ export class EventsController {
     return this.participantsService.createRelation(user.id, eventId);
   }
 
+  @ApiOperation({
+    summary: 'Get all events',
+  })
   @Get()
   async getAll(@Query() query: QueryAllEventsDto) {
     return this.eventsService.getAll(query);
   }
 
+  @ApiOperation({
+    summary: 'View events where current user is participating',
+  })
+  @ApiBearerAuth()
   @UseGuards(JwtGuard)
   @Get('/participants/me')
   async getParticipatingEvents(@User() user: UserEntity) {
     return this.eventsService.getAllWhereUserIsParticipating(user.id);
   }
 
+  @ApiOperation({
+    summary: 'Get event by id',
+  })
   @Get('/:eventId')
   async getOneById(@Param('eventId') eventId: string) {
     return this.eventsService.getOneById(eventId);
   }
 
+  @ApiOperation({
+    summary: 'Update event',
+  })
+  @ApiBearerAuth()
   @UseGuards(JwtGuard)
   @Patch('/:eventId')
   async update(
@@ -70,6 +93,10 @@ export class EventsController {
     return this.eventsService.update(user, eventId, updateEventDto);
   }
 
+  @ApiOperation({
+    summary: 'Delete event',
+  })
+  @ApiBearerAuth()
   @UseGuards(JwtGuard)
   @Delete('/:eventId')
   async delete(
